@@ -1,0 +1,21 @@
+' Set scopes
+scopes: (
+  ["src/lib", "tests/lib", "lib"] = "lib";
+  ["src/utils", "tests/utils"] = "utils";
+  "src/cli" = "cli";
+);
+
+' Set prefixes
+prefixes: (
+  modified untracked "src" = "feat";
+  modified untracked ["tests", "test"] = "tests";
+  modified untracked = "feat";
+);
+
+' Set messages
+messages: (
+  modified untracked "src" = "more implementation";
+  modified untracked ["test", "tests"] = "add tests";
+);
+
+traverse = true;
