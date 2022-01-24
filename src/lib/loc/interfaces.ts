@@ -1,10 +1,7 @@
 export interface Args {
-  cwd: string
-}
-
-export interface ReadDir {
-  dirs: string[]
-  files: string[]
+  readonly cwd: string
+  readonly paths?: string[]
+  readonly yes?: boolean
 }
 
 export interface Count {
