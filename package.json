@@ -3,8 +3,13 @@
   "version": "0.1.0",
   "description": "lines-of-code",
   "main": "index.js",
+  "bin": {
+    "loc": "dist/cli/index.cli.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "i": "tsc && npm i -g",
+    "i:sudo": "tsc && sudo npm i -g",
     "build": "tsc"
   },
   "author": "Sihle Masebuku",
