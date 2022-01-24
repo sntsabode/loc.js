@@ -1,13 +1,22 @@
+import { unsafe } from '../../lib/utils'
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 export default class ArgParser<Argv extends { }> {
-  private args: ArgParserArg[] = []
+  private args: ArgParserArg<Argv>[] = []
 
   #argv = process.argv
   #args = { } as Argv
   #i = 0
 
-  arg(arg: string, options: ArgParserOption): ArgParser<Argv> {
-    this.args.push({ arg, ...options })
+  get staged_args(): Argv { return this.#args }
+
+  arg(arg: keyof Argv, options: ArgParserOption<Argv>): ArgParser<Argv> {
+    this.args.push({ arg: arg as string, ...options })
+    return this
+  }
+
+  insert<T>(arg: keyof Argv, val: T): ArgParser<Argv> {
+    this.#args[arg] = val as unsafe
     return this
   }
 
@@ -31,11 +40,14 @@ export default class ArgParser<Argv extends { }> {
     this.matchArg(this.args[i]!)
   }
 
-  private matchArg(arg: ArgParserArg) {
+  private matchArg(arg: ArgParserArg<Argv>) {
     switch (arg.type) {
       case 'string':
       case 'number':
         this.processLookAhead(arg); break
+
+      case 'array':
+        this.processArray(arg); break
 
       case 'boolean':
       default:
@@ -43,23 +55,47 @@ export default class ArgParser<Argv extends { }> {
     }
   }
 
-  private processLookAhead(arg: ArgParserArg) {
+  private processLookAhead(arg: ArgParserArg<Argv>) {
     this.#i++
-    this.#args[arg.arg] = this.#argv[this.#i]
+    this.#args[arg.arg] = arg.sanitizer
+      ? arg.sanitizer(this.#argv[this.#i], this)
+      : this.#argv[this.#i]
+  }
+
+  private processArray(arg: ArgParserArg<Argv>) {
+    this.#args[arg.arg] = []
+    this.#i++
+
+    while (this.#i < this.#argv.length) {
+      const a = this.#argv[this.#i]
+
+      if (
+        /-[\w](?!\w)/.test(a)
+        || /--[\w]+/.test(a)
+      ) { this.#i--; break }
+
+      this.#args[arg.arg].push(
+        arg.sanitizer ? arg.sanitizer(a, this) : a
+      )
+
+      this.#i++
+    }
   }
 }
 
-export type ArgParserArg = ArgParserOption & { arg: string }
+export type ArgParserArg<T> = ArgParserOption<T> & { arg: string }
 
-export interface ArgParserOption {
+export interface ArgParserOption<T> {
   alias?: string
   type: keyof ArgParserType
   describe?: string
   default?: ArgParserType
+  sanitizer?: (v: string, sup: ArgParser<T>) => ArgParserType[keyof ArgParserType]
 }
 
 export interface ArgParserType {
   'boolean': boolean
   'string': string
   'number': number
+  'array': string[]
 }
