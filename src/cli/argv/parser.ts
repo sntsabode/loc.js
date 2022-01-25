@@ -79,9 +79,18 @@ export default class ArgParser<Argv extends { }> {
 
   private processLookAhead(arg: ArgParserArg<Argv>) {
     this.#i++
-    (this.#args as unsafe)[arg.arg] = arg.sanitizer
+    const a = arg.sanitizer
       ? arg.sanitizer(this.pargs[this.#i]!, this)
       : this.pargs[this.#i]
+
+    if (arg.choices) {
+      const i = arg.choices.findIndex(c => c === a)
+      if (i === -1) {
+        throw new Error(`Expected ${arg.choices.join(' || ')} found ${a}`)
+      }
+    }
+
+    (this.#args as unsafe)[arg.arg] = a
   }
 
   private processArray(arg: ArgParserArg<Argv>) {
@@ -112,6 +121,7 @@ export interface ArgParserOption<T> {
   type: keyof ArgParserType
   describe?: string
   default?: ArgParserType
+  choices?: string[]
   sanitizer?: (v: string, sup: ArgParser<T>) => ArgParserType[keyof ArgParserType]
 }
 
