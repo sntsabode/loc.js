@@ -14,13 +14,13 @@ export default class ArgParser<Argv extends { }> {
 
   get staged_args(): Argv { return this.#args }
 
-  arg(arg: keyof Argv, options: ArgParserOption<Argv>): ArgParser<Argv> {
+  arg<T extends keyof Argv>(arg: T, options: ArgParserOption<Argv>): ArgParser<Argv> {
     this.args.push({ arg: arg as string, ...options })
     return this
   }
 
-  insert<T>(arg: keyof Argv, val: T): ArgParser<Argv> {
-    this.#args[arg] = val as unsafe
+  insert<T extends keyof Argv>(arg: T, val: Argv[T]): ArgParser<Argv> {
+    this.#args[arg] = val
     return this
   }
 
