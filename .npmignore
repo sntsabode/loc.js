@@ -1,0 +1,25 @@
+# dependencies
+node_modules
+
+# configuration
+.git
+.github
+.vscode
+.eslintignore
+.eslintrc
+.gitattributes
+.gitignore
+.nycrc
+.autogit
+.editorconfig
+tsconfig.json
+
+# ts-source
+src
+tests
+
+# generated-files
+.nyc_output
+coverage
+yarn-error.log
+yarn.lock
