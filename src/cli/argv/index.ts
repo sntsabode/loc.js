@@ -23,6 +23,12 @@ const fetch_argv = (
         : sup.staged_args.cwd + '/' + p
     }
   })
+  .arg('log', {
+    alias: 'l',
+    type: 'string',
+    describe: 'Whether or not the process should log.',
+    choices: ['y', 'n']
+  })
   .insert('cwd', process.cwd())
   .argv
 
