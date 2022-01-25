@@ -1,0 +1,3 @@
+describe('loc test suite', () => {
+
+})
