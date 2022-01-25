@@ -1,10 +1,14 @@
-import { unsafe } from '../../lib/utils'
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { nil, unsafe } from '../../lib/utils'
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export default class ArgParser<Argv extends { }> {
+  constructor(
+    private pargs = process.argv
+  ) { }
+
   private args: ArgParserArg<Argv>[] = []
 
-  #argv = process.argv
   #args = { } as Argv
   #i = 0
 
@@ -21,8 +25,8 @@ export default class ArgParser<Argv extends { }> {
   }
 
   get argv(): Argv {
-    for (const arg of this.#argv) {
-      this.processArg(arg)
+    while (this.#i < this.pargs.length) {
+      this.processArg(this.pargs[this.#i]!)
       this.#i++
     }
 
@@ -30,14 +34,32 @@ export default class ArgParser<Argv extends { }> {
   }
 
   private processArg(arg: string) {
-    const i = this.args.findIndex(
+    if (/-[\w+]{2,}/.test(arg)) {
+      this.processMultiArg(arg)
+      return
+    }
+
+    const a = this.args.find(
       a => (!!a.alias && a.alias === arg.substring(1))
         || a.arg === arg.substring(2)
     )
-    if (i === -1) { return }
+    if (!a) { return }
 
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    this.matchArg(this.args[i]!)
+    this.matchArg(a)
+  }
+
+  private processMultiArg(arg: string) {
+    let c: string
+    let a: nil<ArgParserArg<Argv>>
+    for (let i = 1; i < arg.length; i++) {
+      c = arg.charAt(i)
+      a = this.args.find(
+        a => !!a.alias && a.alias === c
+      )
+      if (!a) { return }
+
+      this.matchArg(a)
+    }
   }
 
   private matchArg(arg: ArgParserArg<Argv>) {
@@ -51,30 +73,30 @@ export default class ArgParser<Argv extends { }> {
 
       case 'boolean':
       default:
-        this.#args[arg.arg] = true; break
+        (this.#args as unsafe)[arg.arg] = true; break
     }
   }
 
   private processLookAhead(arg: ArgParserArg<Argv>) {
     this.#i++
-    this.#args[arg.arg] = arg.sanitizer
-      ? arg.sanitizer(this.#argv[this.#i], this)
-      : this.#argv[this.#i]
+    (this.#args as unsafe)[arg.arg] = arg.sanitizer
+      ? arg.sanitizer(this.pargs[this.#i]!, this)
+      : this.pargs[this.#i]
   }
 
   private processArray(arg: ArgParserArg<Argv>) {
-    this.#args[arg.arg] = []
+    (this.#args as unsafe)[arg.arg] = []
     this.#i++
 
-    while (this.#i < this.#argv.length) {
-      const a = this.#argv[this.#i]
+    while (this.#i < this.pargs.length) {
+      const a = this.pargs[this.#i]!
 
       if (
         /-[\w](?!\w)/.test(a)
         || /--[\w]+/.test(a)
       ) { this.#i--; break }
 
-      this.#args[arg.arg].push(
+      (this.#args as unsafe)[arg.arg].push(
         arg.sanitizer ? arg.sanitizer(a, this) : a
       )
 
