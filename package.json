@@ -1,5 +1,5 @@
 {
-  "name": "loc.js",
+  "name": "@snts.abode/loc.js",
   "version": "0.1.0",
   "description": "lines-of-code",
   "main": "dist/index.js",
@@ -11,9 +11,15 @@
     "test:coverage": "nyc mocha -r ts-node/register tests/index.test.ts --timeout 1000 --colors",
     "i": "tsc && npm i -g",
     "i:sudo": "tsc && sudo npm i -g",
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "eslint . --ext .ts",
+    "prepare": "yarn build",
+    "prepublishOnly": "yarn lint && yarn test",
+    "preversion": "yarn lint",
+    "pub": "npm publish --access=public --access public"
   },
-  "author": "Sihle Masebuku",
+  "author": "Sihle Masebuku <snts.abode@gmail.com>",
+  "repository": "https://github.com/sntsabode/loc.js",
   "license": "MIT",
   "devDependencies": {
     "@istanbuljs/nyc-config-typescript": "^1.0.2",
