@@ -1,7 +1,9 @@
 import { Argv } from './interfaces'
 import ArgParser from './parser'
 
-const fetch_argv = () => new ArgParser<Argv>()
+const fetch_argv = (
+  argv?: string[]
+) => new ArgParser<Argv>(argv)
   .arg('yes', {
     alias: 'y',
     type: 'boolean',
@@ -11,9 +13,15 @@ const fetch_argv = () => new ArgParser<Argv>()
     alias: 'p',
     type: 'array',
     describe: 'Enter a path loc should work in, relative to the current directory.',
-    sanitizer: (p, sup) => p.substring(0, 2) === './'
-      ? sup.staged_args.cwd + '/' + p.substring(2)
-      : sup.staged_args.cwd + '/' + p
+    sanitizer: (p, sup) => {
+      if (p.endsWith('/')) {
+        p = p.substring(0, p.length - 1)
+      }
+
+      return p.substring(0, 2) === './'
+        ? sup.staged_args.cwd + '/' + p.substring(2)
+        : sup.staged_args.cwd + '/' + p
+    }
   })
   .insert('cwd', process.cwd())
   .argv
