@@ -23,8 +23,10 @@ export default class loc {
       if (!this.checkEntry(path)) { continue }
       const stat = lstatSync(path)
 
-      const [emoji, val] = stat.isDirectory() ? ['📂', 'directory'] : ['📝', 'file']
-      console.log(`${emoji} Current ${val}:`, path)
+      if (this.args.log === 'y') {
+        const [emoji, val] = stat.isDirectory() ? ['📂', 'directory'] : ['📝', 'file']
+        console.log(`${emoji} Current ${val}:`, path)
+      }
 
       if (!this.args.yes) {
         const a = await ask('loc>')
