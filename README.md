@@ -3,9 +3,15 @@
   <a href="#" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-blue.svg" />
   </a>
-  <img alt="Maintenance" src="https://img.shields.io/badge/Maintained-yes-green.svg" />
+  <a href="https://badge.fury.io/js/@snts.abode%2Floc.js">
+    <img src="https://badge.fury.io/js/@snts.abode%2Floc.js.svg" alt="npm version" />
+  </a>
+  <img alt="Maintenance" src="https://img.shields.io/badge/Maintained-yes-blue.svg" />
   <a href="#" target="_blank">
     <img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen" />
+  </a>
+  <a href="https://github.com/sntsabode/loc.js/actions/workflows/test.yaml" target="_blank">
+    <img alt="loc.js-test" src="https://github.com/sntsabode/loc.js/actions/workflows/test.yaml/badge.svg" />
   </a>
 </p>
 
@@ -21,10 +27,16 @@
 
 ## Installation
 
-### Install from NPM
+### Install from ***npm***
 
 ```sh
-coming soon
+npm i -g @snts.abode/loc.js
+```
+
+Might have to use sudo on ***unix systems***
+
+```sh
+sudo npm i -g @snts.abode/loc.js
 ```
 
 ### Install from source
