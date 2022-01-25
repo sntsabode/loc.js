@@ -1,3 +1,4 @@
+import { sep } from 'path'
 import { Argv } from './interfaces'
 import ArgParser from './parser'
 
@@ -19,8 +20,8 @@ const fetch_argv = (
       }
 
       return p.substring(0, 2) === './'
-        ? sup.staged_args.cwd + '/' + p.substring(2)
-        : sup.staged_args.cwd + '/' + p
+        ? sup.staged_args.cwd + sep + p.substring(2)
+        : sup.staged_args.cwd + sep + p
     }
   })
   .arg('log', {
