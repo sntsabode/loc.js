@@ -7,8 +7,8 @@
     "loc.js": "dist/cli/index.cli.js"
   },
   "scripts": {
-    "test": "mocha -r ts-node/register tests/index.test.ts --timeout 1000",
-    "test:coverage": "nyc mocha -r ts-node/register tests/index.test.ts --timeout 1000",
+    "test": "mocha -r ts-node/register tests/index.test.ts --timeout 1000 --colors",
+    "test:coverage": "nyc mocha -r ts-node/register tests/index.test.ts --timeout 1000 --colors",
     "i": "tsc && npm i -g",
     "i:sudo": "tsc && sudo npm i -g",
     "build": "tsc"
